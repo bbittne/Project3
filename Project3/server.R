@@ -66,8 +66,40 @@ shinyServer(function(input, output, session) {
     
     ##Numerical Summaries
     getData <- reactive({
+        ##For complete dataset
+        #newData <- stockResults[,c("Symbol","Name","tDate",var)]
+        
         var <- input$si_var
-        newData <- stockResults[,c("Symbol","Name","tDate",var)]
+        sumOption <- input$rdoSumOption
+        
+        stockResultsNew<-stockResults %>% mutate(tYear=as.numeric(format(stockResults$tDate, "%Y")))
+        newData <- stockResultsNew[,c("Name","tYear",var)]
+        if (var=="c"){
+            if(sumOption=="mean"){
+                newData<-aggregate(c ~ Name+tYear, data = stockResultsNew, FUN = mean)
+            }else if(sumOption=="max"){
+                newData<-aggregate(c ~ Name+tYear, data = stockResultsNew, FUN = max)
+            }else if(sumOption=="min"){
+                newData<-aggregate(c ~ Name+tYear, data = stockResultsNew, FUN = min)
+            }
+        }else if (var=="v"){
+            if(sumOption=="mean"){
+                newData<-aggregate(v ~ Name+tYear, data = stockResultsNew, FUN = mean)
+            }else if(sumOption=="max"){
+                newData<-aggregate(v ~ Name+tYear, data = stockResultsNew, FUN = max)
+            }else if(sumOption=="min"){
+                newData<-aggregate(v ~ Name+tYear, data = stockResultsNew, FUN = min)
+            }
+        }else if (var=="n"){
+            if(sumOption=="mean"){
+                newData<-aggregate(n ~ Name+tYear, data = stockResultsNew, FUN = mean)
+            }else if(sumOption=="max"){
+                newData<-aggregate(n ~ Name+tYear, data = stockResultsNew, FUN = max)
+            }else if(sumOption=="min"){
+                newData<-aggregate(n ~ Name+tYear, data = stockResultsNew, FUN = min)
+            }
+        }
+
     })
     
     output$tbl = DT::renderDataTable(

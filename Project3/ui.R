@@ -105,11 +105,14 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                      
                      br(),
                      h4("Numerical Summaries"),
-                     selectInput("si_var","Variables to Summarize",
+                     selectInput("si_var","Variable to Summarize",
                                  choices = c("Closing Price" = "c",
                                              "Trading Volume" = "v",
                                              "Number of Transactions" = "n"),
                                  selected="c"),
+                     radioButtons(inputId = "rdoSumOption", label = "Summary Option",
+                                  choiceValues = c("mean", "max","min"),
+                                  choiceNames = c("Mean", "Max", "Min")),
                  ),
                  
                  mainPanel(
