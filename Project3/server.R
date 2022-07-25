@@ -125,4 +125,23 @@ We seek the value of j and s that minimize the equation:
         }
     })##End Modeling INfo
     
+    
+    
+    
+    #Data Page
+    getDataAll <- reactive({
+        #For complete dataset
+        newData <- stockResults[input$numRows[1]:input$numRows[2],input$cboxColumns]
+    })
+    output$tblAll = DT::renderDataTable(
+        getDataAll()
+    )
+    #Download biplot data set
+    output$downloadSD <- downloadHandler(
+        filename = "StockData.csv",
+        content = function(file) {
+            write.csv(getDataAll(), file, row.names = FALSE)
+        }
+    )
+    
 })

@@ -158,16 +158,23 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
              # Sidebar with a slider input for number of bins
              sidebarLayout(
                  sidebarPanel(
-                     sliderInput("bins",
-                                 "Number of bins:",
-                                 min = 1,
-                                 max = 50,
-                                 value = 30)
+                     h4("Subset the Data"),
+                     sliderInput("numRows", label = "Subset the Rows", min = 1, max = 2000, value = c(1, 2000)),
+                     h4("Subset the Columns"),
+                     checkboxGroupInput(inputId = "cboxColumns", label = "Subset the Columns",
+                                        choices = c("Volume"="v", "Volume Weighted Price"="vw", "Opening Price"="o",
+                                                    "Closing Price"="c", "High Price"="h", "Low Price"="l",
+                                                    "Unix Timestamp"="t","Transactions"="n", "Date"="tDate",
+                                                    "Symbol"="Symbol","Name"="Name")),
+                                        selected = c("v","vw","o", "c","h","l","t","n","tDate","Symbol","Name")
+                                        ,
+                     h4("Download the Data"),
+                     downloadButton('downloadSD', "Download Stock Data")
                  ),
                  
-                 # Show a plot of the generated distribution
                  mainPanel(
-                     plotOutput("distPlot")
+                     h3("Complete Data set"),
+                     DTOutput('tblAll')
                  )
              )
         )#End Data Section
