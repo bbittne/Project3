@@ -13,11 +13,11 @@ library(dplyr)
 library(ggplot2)
 library(caret)
 library(shinythemes)
-library(plotly)
+library(DT)
 
 #Grab the data from the exported CSV file
 stockResults <- read_csv("../MSFTStockData.csv")
-#print(stockResults)
+#print(stockResults[1:10,])
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
@@ -104,27 +104,21 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                          ),##End Scatter Plot Conditional Panel
                      
                      br(),
-                     h4("Numerical Summaries")
+                     h4("Numerical Summaries"),
+                     selectInput("si_var","Variables to Summarize",
+                                 choices = c("Closing Price" = "c",
+                                             "Trading Volume" = "v",
+                                             "Number of Transactions" = "n"),
+                                 selected="c"),
                  ),
                  
-                 # # Show a plot of the generated distribution
                  mainPanel(
                      h3("Graphical Summaries"),
-                     plotlyOutput("DEPlot")
-                     #plotlyOutput("scatterPlot"),
-                     #plotlyOutput("histogramPlot")
+                     plotOutput("DEPlot"),
+                     br(),
+                     h3("Numerical Summaries"),
+                     DTOutput('tbl')
                  )
-                 
-                 # mainPanel(h2("Graphical Summary"),
-                 #           plotlyOutput("scatterPlot"),
-                 #           br(),
-                 #           h2("Numerical Summaries"),
-                 #           dataTableOutput("exploreSummary"),
-                 #           h2("Data Set"),
-                 #           dataTableOutput("exploreData")
-                 # ) 
-                 
-                 
              )
         ),#End Data Exploration Section
         

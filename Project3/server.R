@@ -11,23 +11,21 @@ library(shiny)
 library(tidyverse)
 library(dplyr)
 library(ggplot2)
-library(httr)
-library(jsonlite)
 library(caret)
 library(shinythemes)
-library(plotly)
+library(DT)
 
 #Grab the data from the exported CSV file
 stockResults <- read_csv("../MSFTStockData.csv")
 
 # Define server logic required to draw a histogram
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
 
-    
     #Data Exploration Section
-    output$DEPlot <- renderPlotly({
+    ##Graphical Summaries
+    output$DEPlot <- renderPlot({
         if(input$rdoPlotType == "histo"){
-            ##Histogram
+            ###Histogram
             histVar<-input$histoVariable
             if (histVar=="o"){
                 xLabel="Opening Price"
@@ -41,10 +39,12 @@ shinyServer(function(input, output) {
             x<-stockResults[[histVar]]
             bins <- seq(min(x), max(x), length.out = input$bins + 1)
             g <- ggplot(data = stockResults, aes(x = c))
-            ggplotly(g + geom_histogram(breaks = bins) +
-                         labs(title = paste0("Histogram of ",xLabel), x = xLabel, y = "Frequency"))
+            g + geom_histogram(breaks = bins) +
+                labs(title = paste0("Histogram of ",xLabel), x = xLabel, y = "Frequency")
+            #ggplotly(g + geom_histogram(breaks = bins) +
+            #             labs(title = paste0("Histogram of ",xLabel), x = xLabel, y = "Frequency"))
         }else {
-            ##Scatter Plot
+            ###Scatter Plot
             scatVar<-input$scatVariable
             if (scatVar=="n"){
                 yLabel="Number of Transactions"
@@ -57,50 +57,21 @@ shinyServer(function(input, output) {
             }
             y<-stockResults[[scatVar]]
             g <- ggplot(data = stockResults, aes(x = tDate, y = y))
-            ggplotly(g + geom_point() +
-                         labs(title = paste0("Scatterplot for Trading Date and ", yLabel), x = "Trading Date", y = yLabel))
+            g + geom_point() +
+                labs(title = paste0("Scatterplot for Trading Date and ", yLabel), x = "Trading Date", y = yLabel)
+            #ggplotly(g + geom_point() +
+            #         labs(title = paste0("Scatterplot for Trading Date and ", yLabel), x = "Trading Date", y = yLabel))
         }
     })
     
-
+    ##Numerical Summaries
+    getData <- reactive({
+        var <- input$si_var
+        newData <- stockResults[,c("Symbol","Name","tDate",var)]
+    })
     
-    # ##Scatter Plot
-    # output$scatterPlot <- renderPlotly({
-    #     scatVar<-input$scatVariable
-    #     if (scatVar=="n"){
-    #         yLabel="Number of Transactions"
-    #     }else if (scatVar=="c") {
-    #         yLabel="Closing Price"
-    #     }else if (scatVar=="v") {
-    #         yLabel="Trading Volume"
-    #     }else {
-    #         yLabel="Aw Snap!"
-    #     }
-    #     y<-stockResults[[scatVar]]
-    #     g <- ggplot(data = stockResults, aes(x = tDate, y = y))
-    #         ggplotly(g + geom_point() +
-    #             labs(title = paste0("Scatterplot for Trading Date and ", yLabel), x = "Trading Date", y = yLabel))
-    # })
-    # 
-    # ##Histogram
-    # output$histogramPlot <- renderPlotly({
-    #     histVar<-input$histoVariable
-    #     if (histVar=="o"){
-    #         xLabel="Opening Price"
-    #     }else if (histVar=="c") {
-    #         xLabel="Closing Price"
-    #     }else if (histVar=="vw") {
-    #         xLabel="Volume Weighted Avg Price"
-    #     }else {
-    #         xLabel="Aw Snap!"
-    #     }
-    #     x<-stockResults[[histVar]]
-    #     bins <- seq(min(x), max(x), length.out = input$bins + 1)
-    #     g <- ggplot(data = stockResults, aes(x = c))
-    #     ggplotly(g + geom_histogram(breaks = bins) +
-    #                  labs(title = paste0("Histogram of ",xLabel), x = xLabel, y = "Frequency"))
-    # })
-    
-
+    output$tbl = DT::renderDataTable(
+        getData()
+    )
 
 })
