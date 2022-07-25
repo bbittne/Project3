@@ -20,11 +20,11 @@ stockResults <- read_csv("../MSFTStockData.csv")
 #print(stockResults[1:10,])
 
 # Define UI for application that draws a histogram
-shinyUI(fluidPage(theme = shinytheme("cerulean"),
+shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
 
     tabsetPanel(
         
-        tabPanel("About",
+        tabPanel("About",fuild=TRUE,
             # Application title
             titlePanel("ST558 - Project 3"),
             
@@ -68,7 +68,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
             )
         ),#End About Section
         
-        tabPanel("Data Exploration",
+        tabPanel("Data Exploration",fuild=TRUE,
              # Application title
              titlePanel("ST558 - Project 3"),
              h3("Data Exploration"),
@@ -80,8 +80,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                      h4("Graphical Summaries"),
                      
                      radioButtons(inputId = "rdoPlotType", label = "Plot Type",
-                                  choiceValues = c("histo", "scatter" ),
-                                  choiceNames = c("Histogram", "Scatter Plot")),
+                                  choiceNames = c("Histogram", "Scatter Plot"),
+                                  choiceValues = c("histo", "scatter" )),
                          conditionalPanel("input.rdoPlotType == 'histo'",
                             selectInput(inputId = "histoVariable", 
                                       label = "Histogram Variable", 
@@ -111,8 +111,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                                              "Number of Transactions" = "n"),
                                  selected="c"),
                      radioButtons(inputId = "rdoSumOption", label = "Summary Option",
-                                  choiceValues = c("mean", "max","min"),
-                                  choiceNames = c("Mean", "Max", "Min")),
+                                  choiceNames = c("Mean", "Max", "Min"),
+                                  choiceValues = c("mean", "max","min")),
                  ),
                  
                  mainPanel(
@@ -125,33 +125,33 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
              )
         ),#End Data Exploration Section
         
-        tabPanel("Modeling",
+        tabPanel("Modeling",fuild=TRUE,
              # Application title
-             titlePanel("ST558 - Project 3"),
+            titlePanel("ST558 - Project 3"),
              
              # Sidebar with a slider input for number of bins
-             sidebarLayout(
-                 sidebarPanel(
-                     sliderInput("bins",
-                                 "Number of bins:",
-                                 min = 1,
-                                 max = 50,
-                                 value = 30)
-                 ),
-                 
+            sidebarLayout(
+                sidebarPanel(radioButtons("rdoSupModel", "Supervised Learning Model", 
+                           choiceNames = c("Multiple Linear Regression","Regression Tree","Random Forest"),
+                           choiceValues = c("MLR", "rTree","RF"))),
+
                  # Show a plot of the generated distribution
                  mainPanel(
                      # Output: Tabset w/ plot, summary, and table ----
                      tabsetPanel(type = "tabs",
-                                 tabPanel("Modeling Info", plotOutput("plot")),
-                                 tabPanel("Model Fitting", verbatimTextOutput("summary")),
-                                 tabPanel("Prediction", tableOutput("table"))
+                        tabPanel("Modeling Info",
+                            h3("Modeling Descriptions"),
+                            uiOutput("modelInfo"),
+                            plotOutput("plot")
+                        ),
+                        tabPanel("Model Fitting", verbatimTextOutput("summary")),
+                        tabPanel("Prediction", tableOutput("table"))
                      )
                  )
              )
         ),#End Modeling Section
         
-        tabPanel("Data",
+        tabPanel("Data",fuild=TRUE,
              # Application title
              titlePanel("ST558 - Project 3"),
              

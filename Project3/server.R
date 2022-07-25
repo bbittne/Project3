@@ -106,4 +106,23 @@ shinyServer(function(input, output, session) {
         getData()
     )
 
+
+    # Modeling
+    ## Model Info
+    output$modelInfo <- renderUI({
+        if(input$rdoSupModel == "MLR"){
+            withMathJax(helpText("A Linear Regression Model is the first model type we will look at. These models are an intuitive way to investigate the linear relation between multiple variables. These models make the estimation procedure simple and easy to understand. Linear Regression models can come in all different shapes and sizes and can be used to model more than just a straight linear relationship. Regression models can be modified with interactive and or higher order terms that will conform to a more complex relationship. Multiple Linear Regression can be expressed with the following mathematical expressions similar to the following:
+    $$Yi = \\beta_0 + \\beta_1x_{1i} + \\beta_2x_{2i} + + \\beta_3x_{1i}x_{2i}$$"))
+        }else if(input$rdoSupModel == "rTree"){
+            withMathJax(helpText("Tree based methods will split up the predictor space into separate regions and the predictions will be different for each region. Here we will be doing a Regression Tree so for any given region, we will use the mean of observations as our prediction. Fore every possible value of each predictor, we find the Residual Sum of Squares and try to minimize it:
+    $$R_1(j,s) = \\{x|x_j < s\\} \\, and \\, R_2(j,s) = \\{x|x_j \\ge s\\}$$
+We seek the value of j and s that minimize the equation:
+    $$\\sum_{i:x_i\\in R_1(j,s)} (y_i - \\bar y_{R_1})^2 + \\sum_{i:x_i\\in R_2(j,s)} (y_i - \\bar y_{R_2})^2$$"))
+        }else {
+            withMathJax(
+                helpText("The Random Forest Model is an example of an ensemble based model. Instead of traditional decision trees, ensemble methods average across the tree. This will greatly increase our prediction power, but it will come at the expense of the easy interpretation from traditional decision trees. The Random Forest based model will not use all available predictors. Instead it will take a random subset of the predictors for each tree fit and calculate the model fit for that subset. It will repeat the process a pre-determined number of times and automatically pick the best predictors for the model. This will end up creating a reduction in the overall model variance. All of our models will minimize prediction error via the MSE calculation:
+            $$MSE = \\frac{1}{n}\\sum_{i=1}^{n}(y_i - \\hat{y})^2$$"))
+        }
+    })##End Modeling INfo
+    
 })
