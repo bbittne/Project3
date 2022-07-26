@@ -131,10 +131,31 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
              
              # Sidebar with a slider input for number of bins
             sidebarLayout(
-                sidebarPanel(radioButtons("rdoSupModel", "Supervised Learning Model", 
-                           choiceNames = c("Multiple Linear Regression","Regression Tree","Random Forest"),
-                           choiceValues = c("MLR", "rTree","RF"))),
-
+                sidebarPanel(h4("Modeling Info"),
+                                radioButtons("rdoSupModel", "Select model for Description", 
+                                choiceNames = c("Multiple Linear Regression","Regression Tree","Random Forest"),
+                                choiceValues = c("MLR", "rTree","RF")),
+                                br(),
+                                h4("Model Fitting"),
+                                #"Train/Test Data Split - Adjust the Training Portion as necessary",
+                                numericInput("trainSplit", "Train/Test Data Split - Adjust the Training Portion as necessary",
+                                             .8, min = 0.1, max = 0.9,step=0.1),
+                                checkboxGroupInput(inputId = "modelColumns", label = "Select the model variable(s)",
+                                                   choices = c("Volume"="v", "Opening Price"="o", "Date"="tDate"),
+                                                   selected = c("v","o","tDate")),
+                                actionButton("buttonRunModels", "Run All Models"),
+                                br(),
+                                br(),
+                                h4("Predictions"),
+                                radioButtons("rdoPredModel", "Select model for Prediction", 
+                                          choiceNames = c("Multiple Linear Regression","Regression Tree","Random Forest"),
+                                          choiceValues = c("MLR", "rTree","RF")),
+                                numericInput("predValueVolume", "Volume Prediction Value",100000, min = 100000, 
+                                            max = 200000,step=10000),
+                                numericInput("predValueOpenPrice", "Opening Price Prediction Value",100, min = 10, 
+                                            max = 500,step=10)
+                            ),#End sidebarPanel
+                
                  # Show a plot of the generated distribution
                  mainPanel(
                      # Output: Tabset w/ plot, summary, and table ----
@@ -161,13 +182,12 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                      h4("Subset the Data"),
                      sliderInput("numRows", label = "Subset the Rows", min = 1, max = 2000, value = c(1, 2000)),
                      h4("Subset the Columns"),
-                     checkboxGroupInput(inputId = "cboxColumns", label = "Subset the Columns",
+                     checkboxGroupInput(inputId = "cboxColumns", label = "Select the column(s)",
                                         choices = c("Volume"="v", "Volume Weighted Price"="vw", "Opening Price"="o",
                                                     "Closing Price"="c", "High Price"="h", "Low Price"="l",
                                                     "Unix Timestamp"="t","Transactions"="n", "Date"="tDate",
-                                                    "Symbol"="Symbol","Name"="Name")),
-                                        selected = c("v","vw","o", "c","h","l","t","n","tDate","Symbol","Name")
-                                        ,
+                                                    "Symbol"="Symbol","Name"="Name"),
+                                        selected = c("v","vw","o", "c","h","l","t","n","tDate","Symbol","Name")),
                      h4("Download the Data"),
                      downloadButton('downloadSD', "Download Stock Data")
                  ),

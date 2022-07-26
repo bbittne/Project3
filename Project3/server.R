@@ -131,7 +131,7 @@ We seek the value of j and s that minimize the equation:
     #Data Page
     getDataAll <- reactive({
         #For complete dataset
-        newData <- stockResults[input$numRows[1]:input$numRows[2],input$cboxColumns]
+        newData <- stockResults[input$numRows[1]:input$numRows[2],input$cboxColumns,drop=FALSE]
     })
     output$tblAll = DT::renderDataTable(
         getDataAll()
