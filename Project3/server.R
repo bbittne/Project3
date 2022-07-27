@@ -127,6 +127,45 @@ We seek the value of j and s that minimize the equation:
     
     
     
+    ##Model Fitting
+    ###Data Split
+    splitData <- reactive({
+        #Start by subsetting to the requested columns
+        stockData <- stockResults[,c("c",input$modelColumns)]
+        #Grab the split percentage from the input box
+        train <- sample(1:nrow(stockData),size=nrow(stockData)*input$trainSplit)
+        test <- dplyr::setdiff(1:nrow(stockData),train)
+        stockDataTrain <- stockData[train,]
+        stockDataTest <- stockData[test,]
+        stockDataSplit<-list(stockDataTrain=stockDataTrain,stockDataTest=stockDataTest)
+        stockDataSplit
+    })
+    ###Run all models button
+    observeEvent(input$buttonRunModels, {
+        #Subset Data to selected Variables
+        #Training/Test Split
+        observe({print(input$modelColumns)})
+        observe({print(length(input$modelColumns))})
+        
+        splitDataList<-splitData()
+        output$tblTestSplit = DT::renderDataTable(
+            splitDataList$stockDataTrain
+        )
+        
+        #Run Linear Regression Model
+         mlrFit <- train(c ~ v + o, 
+                         data = splitDataList$stockDataTrain, 
+                         method="lm",
+                         trControl=trainControl(method="cv",number=5))
+         observe({print(mlrFit)})
+        
+            #Display the RMSE and summary()
+        #Run Binary Tree Model
+            #Display the RMSE and Tree Plot
+        #Run Random Forest Model
+            #Display the RMSE and variable importance
+    })
+    
     
     #Data Page
     getDataAll <- reactive({

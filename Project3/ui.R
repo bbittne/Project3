@@ -160,15 +160,22 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                  mainPanel(
                      # Output: Tabset w/ plot, summary, and table ----
                      tabsetPanel(type = "tabs",
-                        tabPanel("Modeling Info",
-                            h3("Modeling Descriptions"),
-                            uiOutput("modelInfo"),
-                            plotOutput("plot")
-                        ),
-                        tabPanel("Model Fitting", verbatimTextOutput("summary")),
-                        tabPanel("Prediction", tableOutput("table"))
-                     )
-                 )
+                            tabPanel("Modeling Info",
+                                        h3("Modeling Descriptions"),
+                                        uiOutput("modelInfo"),
+                                        plotOutput("plot")
+                                    ),
+                            tabPanel("Model Fitting",
+                                        h3("Model Fitting tab panel"),
+                                        uiOutput("modelFitting"),
+                                        DTOutput('tblTestSplit')
+                                    ),
+                            tabPanel("Prediction",
+                                        h3("Model Prediction tab panel"),
+                                        uiOutput("modelPrediction")
+                                    )
+                                )#End tabSetPanel
+                          )#End mainPanel
              )
         ),#End Modeling Section
         
