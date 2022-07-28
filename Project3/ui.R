@@ -154,7 +154,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                                 numericInput("predValueVolume", "Volume Prediction Value",100000, min = 100000, 
                                             max = 200000,step=10000),
                                 numericInput("predValueOpenPrice", "Opening Price Prediction Value",100, min = 10, 
-                                            max = 500,step=10)
+                                            max = 500,step=10),
+                                dateInput("predValueTradeDate", "Trading Date Prediction Value",value=Sys.Date()+1, min = Sys.Date(), max = Sys.Date()+30)
                             ),#End sidebarPanel
                 
                  # Show a plot of the generated distribution
@@ -169,7 +170,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                             tabPanel("Model Fitting",
                                         h3("Model Fitting"),
                                         "(Select your options on the left and click the 'Run All Models' button)",
-                                        #DTOutput('tblTestSplit'),
+                                        DTOutput('tblTestSplit'),
                                         h5("Multiple Linear Regression - Summary Statistics"),
                                         textOutput("modelFitTextMLR"),
                                         verbatimTextOutput(outputId = "modelSummaryMLR"),
@@ -178,12 +179,13 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                                         verbatimTextOutput(outputId = "modelSummaryRT"),
                                         plotOutput("modelPlotRTree"),
                                         h5("Random Forest - Summary Statistics"),
-                                        textOutput("modelFitTextRT"),
+                                        textOutput("modelFitTextRF"),
                                         verbatimTextOutput(outputId = "modelSummaryRF")
                                     ),
                             tabPanel("Prediction",
                                         h3("Model Prediction tab panel"),
-                                        uiOutput("modelPrediction")
+                                        verbatimTextOutput(outputId = "modelPrediction")
+                                        #uiOutput("modelPrediction")
                                     )
                                 )#End tabSetPanel
                           )#End mainPanel
