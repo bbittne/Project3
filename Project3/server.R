@@ -14,6 +14,7 @@ library(ggplot2)
 library(caret)
 library(shinythemes)
 library(DT)
+library(tree)
 
 #Grab the data from the exported CSV file
 stockResults <- read_csv("../MSFTStockData.csv")
@@ -140,30 +141,80 @@ We seek the value of j and s that minimize the equation:
         stockDataSplit<-list(stockDataTrain=stockDataTrain,stockDataTest=stockDataTest)
         stockDataSplit
     })
+    
+    modelVars <- reactive({
+        paste("c ~", paste(input$modelColumns, collapse ="+")) %>% as.formula()
+    })
+    
     ###Run all models button
     observeEvent(input$buttonRunModels, {
         #Subset Data to selected Variables
         #Training/Test Split
-        observe({print(input$modelColumns)})
-        observe({print(length(input$modelColumns))})
-        
+        #observe({print(input$modelColumns)})
+        #HTML("<p>Straight Ouput text example.</p>")
         splitDataList<-splitData()
-        output$tblTestSplit = DT::renderDataTable(
-            splitDataList$stockDataTrain
-        )
+        #output$tblTestSplit = DT::renderDataTable(
+        #    splitDataList$stockDataTrain
+        #)
+        observe({print(modelVars())})
         
         #Run Linear Regression Model
-         mlrFit <- train(c ~ v + o, 
-                         data = splitDataList$stockDataTrain, 
+         mlrFit <- train(modelVars(),
+                         data = splitDataList$stockDataTrain,
                          method="lm",
                          trControl=trainControl(method="cv",number=5))
-         observe({print(mlrFit)})
-        
-            #Display the RMSE and summary()
-        #Run Binary Tree Model
-            #Display the RMSE and Tree Plot
-        #Run Random Forest Model
+         
+         #Display the summary statistics
+         output$modelSummaryMLR <- renderPrint(
+             summary(mlrFit)
+         )
+         
+         #Grab the RMSE
+         rmseMLR<-round(mlrFit$results[2],2)
+         outputTextMLR<-paste0("For the MLR Model, the RMSE is: ",rmseMLR)
+         output$modelFitTextMLR <- renderText({
+             outputTextMLR
+         })
+         
+         #Run Regression Tree Model
+         treeFit <- tree(modelVars(), data = splitDataList$stockDataTrain)
+         #Calculate the RMSE
+         predRT <- predict(treeFit, newdata = dplyr::select(splitDataList$stockDataTrain, -c))
+         rmseRT<-round(sqrt(mean((predRT-splitDataList$stockDataTrain$c)^2)),2)
+         outputTextRT<-paste0("For the Regression Tree Model, the RMSE is: ",rmseRT)
+         output$modelFitTextRT <- renderText({
+             outputTextRT
+         })
+         output$modelPlotRTree <- renderPlot({
+             plot(treeFit); text(treeFit)
+         })
+         
+         
+         
+         #Run Random Forest Model
+         randomForestFit <- train(modelVars(), 
+                                  data = splitDataList$stockDataTrain, 
+                                  method="rf",
+                                  preProcess=c("center","scale"),
+                                  trControl=trainControl(method="repeatedcv",number=3,repeats=2),
+                                  tuneGrid=data.frame(mtry=1:3))
+         #Calculate the RMSE
+         #predRF <- predict(randomForestFit, newdata = dplyr::select(splitDataList$stockDataTrain, -c))
+         #rmseRF<-round(sqrt(mean((predRF-splitDataList$stockDataTrain$c)^2)),2)
+         #outputTextRF<-paste0("For the Random Forest Model, the RMSE is: ",rmseRF)
+         #output$modelFitTextRF <- renderText({
+         #    outputTextRF
+         #})
+         #Display the summary statistics
+         output$modelSummaryRF <- renderPrint(
+             #Variable Importance
+             #varImp(rf, scale = FALSE)
+             randomForestFit
+         )
             #Display the RMSE and variable importance
+
+             
+         #})
     })
     
     

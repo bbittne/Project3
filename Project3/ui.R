@@ -14,6 +14,7 @@ library(ggplot2)
 library(caret)
 library(shinythemes)
 library(DT)
+library(tree)
 
 #Grab the data from the exported CSV file
 stockResults <- read_csv("../MSFTStockData.csv")
@@ -166,9 +167,19 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                                         plotOutput("plot")
                                     ),
                             tabPanel("Model Fitting",
-                                        h3("Model Fitting tab panel"),
-                                        uiOutput("modelFitting"),
-                                        DTOutput('tblTestSplit')
+                                        h3("Model Fitting"),
+                                        "(Select your options on the left and click the 'Run All Models' button)",
+                                        #DTOutput('tblTestSplit'),
+                                        h5("Multiple Linear Regression - Summary Statistics"),
+                                        textOutput("modelFitTextMLR"),
+                                        verbatimTextOutput(outputId = "modelSummaryMLR"),
+                                        h5("Regression Tree - Summary Statistics"),
+                                        textOutput("modelFitTextRT"),
+                                        verbatimTextOutput(outputId = "modelSummaryRT"),
+                                        plotOutput("modelPlotRTree"),
+                                        h5("Random Forest - Summary Statistics"),
+                                        textOutput("modelFitTextRT"),
+                                        verbatimTextOutput(outputId = "modelSummaryRF")
                                     ),
                             tabPanel("Prediction",
                                         h3("Model Prediction tab panel"),
