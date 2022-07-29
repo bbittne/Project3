@@ -15,5 +15,5 @@ install.packages(c("shiny", "tidyverse", "caret", "shinythemes", "DT", "tree"))
 
 • The shiny::runGitHub() code that we can copy and paste into RStudio to run your app.
 
-shiny::runGitHub("Project3", "bbittne")
+shiny::runGitHub("Project3", "bbittne", ref = "main", subdir = "/Project3/")
 
