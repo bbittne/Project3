@@ -18,7 +18,6 @@ library(tree)
 
 #Grab the data from the exported CSV file
 stockResults <- read_csv("../MSFTStockData.csv")
-#print(stockResults[1:10,])
 
 # Define UI for application that draws a histogram
 shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
@@ -47,7 +46,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                     h3("Overview"),
                     tags$p("The purpose of this application is so show off my shiny app skills!! I thought about using a 'z' instead of an 's' on skills but I turn 40 in a few days so I think I'm past that stage by a couple decades! In this application we will take a deep dive into one of the world's greatest companies - you guessed it - Microsoft!!"),
                     h3("Data and Source"),
-                    tags$p("When you already have something great, you don't re-invent the wheel. Hence I am shamelessly using the same API source and content that I used from project 1. "),
+                    tags$p("When you already have something great, you don't re-invent the wheel. Hence I am shamelessly using the same API source and content that I used from project 1. Rather than calling the API, I exported the data to a .csv and read the dataset directly into the application."),
                     tags$ul(
                         tags$li(a(href = "https://polygon.io/docs/stocks/get_v2_aggs_ticker__stocksticker__range__multiplier___timespan___from___to", "API Source"))
                     ),
@@ -55,13 +54,19 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                     tags$p("Here is where I talk about all of the pages in the application."),
                     tags$ul(
                         tags$li("Page 1 - About"),
-                            tags$p("Hopefully you get the gist about this page:"),
+                            tags$p("Hopefully you get the gist about this page!"),
                         tags$li("Page 2 - Data Exploration"),
-                            tags$p("Here we start to get into the good stuff."),
+                            tags$p("Here we start to get into the good stuff. On the side panel we start with two plotting options, a Histogram and a Scatter Plot."),
+                            tags$p("A histogram is used to show the frequency of a numeric variable's occurance. The variable options for the histogram are Opening Price, Closing Price, and Volume Weighted Average Price. The Closing Price is particularly useful here since it shows where the price is most likely to close at."),
+                            tags$p("A scatter plot is a great way to show individual observations. Here there are three available variables, Trading Volume, Number of Transactions, and Closing Price. All of these variables are plotted over the trading date on the x-axis. When you see some of the massive numbers in volume and transactions, it really make you question what was happening on those specific trading days."),
+                        tags$p("Also available are 'Numerical Summaries' which give a quick overview of the variables for each year going back to 2017. Seeing the closing price average in 2017 was $78 vs $283 in 2022 makes me wish I had some extra money for investing!"),
                         tags$li("Page 3 - Modeling"),
-                            tags$p("Here model some data."),
+                            tags$p("Now that we have done some initial analysis, it is easy to see that the most important variable is going to be the Closing Price. This will be our response variable for all of our modeling. This Modeling page contains three separate tabs, each of which correspond to a section on the side panel."),
+                            tags$p("The Modeling Info tab has the corresponding Modeling Info section on the side panel. Here be give a basic overview of our three model types, along with some neat mathematical expressions for all the math brains out there."),
+                            tags$p("The Model Fitting tab has a corresponding Model Fitting section on the side panel. This is where you have the option to change our Training/Test split percentage, as well as the variables used in our modeling. Once you have the model set up according to your liking, click on the 'Run All Models' button to fit all three models. Note - the Random Forest model will take 5-10 seconds to run."),
+                            tags$p("The Prediction tab has a corresponding Predictions section on the side panel. Once the models have been fit, you can click between the model types and see the predicted value. You can also change the variables to you liking and the prediction will automatically be re-evaluated."),
                         tags$li("Page 4 - Data"),
-                            tags$p("Here data some data."),
+                            tags$p("Like what you see? Well you are in luck! Here is where you can export the data and come up with your own modeling. There are 1257 records in this dataset so feel free to subset the rows and columns however you see fit. Once you are ready, just click on the 'Download Stock Data' and the data will be expoted to a .csv file of your choosing."),
                     ),
                     h3("Microsoft Logo Interpretation"),
                     img(src="MSLogo.png", height='225px',width='362px'),
@@ -128,7 +133,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
         
         tabPanel("Modeling",fuild=TRUE,
              # Application title
-            titlePanel("ST558 - Project 3"),
+            titlePanel("Modeling"),
              
              # Sidebar with a slider input for number of bins
             sidebarLayout(
@@ -195,13 +200,13 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
         
         tabPanel("Data",fuild=TRUE,
              # Application title
-             titlePanel("ST558 - Project 3"),
+             titlePanel("Data"),
              
              # Sidebar with a slider input for number of bins
              sidebarLayout(
                  sidebarPanel(
                      h4("Subset the Data"),
-                     sliderInput("numRows", label = "Subset the Rows", min = 1, max = 2000, value = c(1, 2000)),
+                     sliderInput("numRows", label = "Subset the Rows", min = 1, max = 1257, value = c(1, 1257)),
                      h4("Subset the Columns"),
                      checkboxGroupInput(inputId = "cboxColumns", label = "Select the column(s)",
                                         choices = c("Volume"="v", "Volume Weighted Price"="vw", "Opening Price"="o",
