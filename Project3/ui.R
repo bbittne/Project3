@@ -183,7 +183,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"), withMathJax(),
                                         verbatimTextOutput(outputId = "modelSummaryRF")
                                     ),
                             tabPanel("Prediction",
-                                        h3("Model Prediction tab panel"),
+                                        h3("Model Predictions"),
+                                        h5("'Any sufficiently advanced technology is indistinguishable from magic' - Arthur C. Clarke"),
                                         verbatimTextOutput(outputId = "modelPrediction")
                                         #uiOutput("modelPrediction")
                                     )

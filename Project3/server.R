@@ -209,14 +209,23 @@ We seek the value of j and s that minimize the equation:
         
         ##Model Predictions
         dfPredictions<-data.frame(v=input$predValueVolume,o=input$predValueOpenPrice,tDate=input$predValueTradeDate)
+        #Linear Regression Model
+        predLMNew <- predict(mlrFit, newdata = dfPredictions)
+        predictLMOut<-paste0("The predicted closing price from the Linear Regression Model is: ",predLMNew)
+        #Regression Tree Model
+        predRTNew <- predict(treeFit, newdata = dfPredictions)
+        predictRTOut<-paste0("The predicted closing price from the Regression Tree Model is: ",predRTNew)
+        #Random Forest Model
         predRFNew <- predict(randomForestFit, newdata = dfPredictions)
-        # output$modelPrediction <- renderUI({
-        #     predRF <- predict(randomForestFit, newdata = dfPredictions)
-        # })
+        predictRFOut<-paste0("The predicted closing price from the Random Forest Model is: ",predRFNew)
         output$modelPrediction <- renderPrint(
-            predRFNew
+            if (input$rdoPredModel=="MLR"){
+                predictLMOut
+            }else if (input$rdoPredModel=="rTree"){
+                predictRTOut
+            }else 
+                predictRFOut
         )
-        
         
     })##End Model Fit
     
